@@ -18,6 +18,8 @@ script:
   - python setup.py test
 matrix:
   exclude:
+    - python: "pypy3"
+      env: DJANGO_VERSION=1.4.21
     - python: "3.4"
       env: DJANGO_VERSION=1.4.2
     - python: "3.3"
