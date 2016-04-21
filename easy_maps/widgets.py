@@ -1,21 +1,17 @@
-# -*- coding: utf-8 -*-
-
-from django import template
+from __future__ import absolute_import
 from django.forms import TextInput
-
+from django import template
 
 class AddressWithMapWidget(TextInput):
     width = 700
     height = 200
     zoom = 16
 
-    tpl = "{{% load easy_maps_tags %}}{{% easy_map address {0.width} {0.height} {0.zoom} %}}"
-
     def render(self, name, value, attrs=None):
-        output = super(AddressWithMapWidget, self).render(name, value, attrs)
+        tpl = "{{% load easy_maps_tags %}}" \
+              "{{% easy_map address {0.width} {0.height} {0.zoom} %}}".format(self)
+        map_template = template.Template(tpl)
+        context = template.Context({'address': value})
 
-        t = template.Template(self.tpl.format(self))
-        context = template.Context({
-            'address': value,
-        })
-        return output + t.render(context)
+        default_html = super(AddressWithMapWidget, self).render(name, value, attrs)
+        return default_html + map_template.render(context)
